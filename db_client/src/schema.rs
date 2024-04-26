@@ -10,7 +10,7 @@ diesel::table! {
 }
 
 diesel::table! {
-    devices (id) {
+    device_identifiers (id) {
         id -> Integer,
         #[max_length = 256]
         name -> VarChar,
@@ -38,7 +38,7 @@ diesel::table! {
 }
 
 diesel::table! {
-    states (id) {
+    device_states (id) {
         id -> Integer,
         #[max_length = 256]
         name -> VarChar,
@@ -56,7 +56,7 @@ diesel::table! {
 }
 
 diesel::table! {
-    alarms (id) {
+    device_alarms (id) {
         id -> Integer,
         priority_level_id -> Integer,
         #[max_length = 256]
@@ -83,7 +83,62 @@ diesel::table! {
 }
 
 diesel::table! {
-    device_compatible_protocols (id) {
-        id -> Integer,
+    device_compatible_protocols (device_identifier_id, communication_protocol_id) {
+        device_identifier_id -> Integer,
+        communication_protocol_id -> Integer,
     }
 }
+
+diesel::table! {
+    device_valid_states (device_identifier_id, device_state_id) {
+        device_identifier_id -> Integer,
+        device_state_id -> Integer,
+    }
+}
+
+diesel::table! {
+    device_valid_state_transitions (device_identifier_id, device_state_transition_id) {
+        device_identifier_id -> Integer,
+        device_state_transition_id -> Integer
+    }
+}
+
+diesel::table! {
+    device_valid_alarms (device_identifier_id, device_alarm_id) {
+        device_identifier_id -> Integer,
+        device_alarm_id -> Integer
+    }
+}
+
+diesel::table! {
+    device_supported_magnitudes (device_identifier_id, magnitude_id) {
+        device_identifier_id -> Integer,
+        magnitude_id -> Integer
+    }
+}
+
+diesel::table! {
+    fired_alarms_log (valid_fired_alarm_id, timestamp) {
+        valid_fired_alarm_id -> Integer,
+        timestamp -> Datetime
+    }
+}
+
+diesel::table! {
+    status_log (current_valid_status, timestamp) {
+        current_valid_status -> Integer,
+        timestamp -> Datetime,
+    }
+}
+
+diesel::table! {
+    state_transition_execution_log (valid_state_transition_id, timestamp) {
+        valid_state_transition_id -> Integer,
+        #[max_length = 256]
+        name -> VarChar,
+        #[max_length = 512]
+        report_details -> VarChar,
+        timestamp -> Datetime
+    }
+}
+
